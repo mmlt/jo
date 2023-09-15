@@ -13,13 +13,14 @@ kubectl -n $ns get po -o json | jq '[ .items[] | .metadata.name as $p | (.spec.c
 
 
 Write all container logs to files:
+
 Note that the command passed to jo is quoted (without the quotes all logs will go to a single file)
 ```
 kubectl -n $ns get po -o json | jq '[ .items[] | .metadata.name as $p | (.spec.containers + .spec.initContainers)[] | {"p": $p, "c": .name} ]' | jo do "kubectl -n $ns logs --ignore-errors=true \$p -c \$c >$out_dir/\$p+\$c.log"
 ```
 
 
-Most of the time jo do flags and command flag are separated ok. When flags are ambiguous add --
+Most of the time jo do flags and command flag are separated ok but when flags are ambiguous add `--`:
 ```
 jo do --in example.json -- echo -n \$x
 ```
